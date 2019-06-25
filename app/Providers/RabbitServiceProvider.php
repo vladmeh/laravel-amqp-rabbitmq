@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Rabbit;
 use App\Services\RabbitRpc;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,9 +15,9 @@ class RabbitServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->publishes([
-            __DIR__ . '/../config/rabbit.php' => config_path('rabbit.php'),
-        ], 'rabbit');
+        $this->app->singleton(RabbitRpc::class, function () {
+            return new RabbitRpc(config('rabbit.connections.stream'));
+        });
     }
 
     /**
@@ -26,8 +27,11 @@ class RabbitServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton(RabbitRpc::class, function () {
-            return new RabbitRpc(config('rabbit.connections.stream'));
-        });
+        $this->app->bind('Rabbit', Rabbit::class);
+
+        $this->publishes([
+            __DIR__ . '/../config/rabbit.php' => config_path('rabbit.php'),
+        ], 'rabbit');
+
     }
 }

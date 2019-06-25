@@ -4,76 +4,18 @@
 namespace App\Services;
 
 
-use Illuminate\Support\Arr;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class Rabbit
 {
-    private $connect_options;
-
     /**
-     * @var AMQPStreamConnection
+     * @param string $message
+     * @param string $queue
+     * @return string
+     * @throws BindingResolutionException
      */
-    private $connection;
-
-    /**
-     * @var AMQPChannel
-     */
-    private $channel;
-
-    /**
-     * Rabbit constructor.
-     * @param $connect_options
-     */
-    public function __construct($connect_options)
-    {
-        $this->connect_options = $connect_options;
-
-        $this->connection = new AMQPStreamConnection(
-            Arr::get($connect_options, 'host'),
-            Arr::get($connect_options, 'port'),
-            Arr::get($connect_options, 'user'),
-            Arr::get($connect_options, 'password'),
-
-            Arr::get($connect_options, 'vhost'),
-            Arr::get($connect_options, 'insist'),
-            Arr::get($connect_options, 'login_method'),
-            Arr::get($connect_options, 'login_response'),
-            Arr::get($connect_options, 'locale'),
-            Arr::get($connect_options, 'connection_timeout'),
-            Arr::get($connect_options, 'read_write_timeout'),
-            Arr::get($connect_options, 'context'),
-            Arr::get($connect_options, 'keepalive'),
-            Arr::get($connect_options, 'heartbeat'),
-            Arr::get($connect_options, 'channel_rpc_timeout'),
-            Arr::get($connect_options, 'ssl_protocol')
-        );
-
-        $this->channel = $this->connection->channel();
-    }
-
-    /**
-     * @return AMQPStreamConnection
-     */
-    public function getConnection(): AMQPStreamConnection
-    {
-        return $this->connection;
-    }
-
-    /**
-     * @return AMQPChannel
-     */
-    public function getChannel(): AMQPChannel
-    {
-        return $this->channel;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConnectOptions()
-    {
-        return $this->connect_options;
+    public function rpc($message, $queue){
+        $rabbitRpc = app()->make(RabbitRpc::class);
+        return $rabbitRpc->handle($message, $queue);
     }
 }

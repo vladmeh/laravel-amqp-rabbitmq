@@ -229,6 +229,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Amqp' => Bschmitt\Amqp\Facades\Amqp::class,
+        'Rabbit' => App\Facades\Rabbit::class,
     ],
 
 ];

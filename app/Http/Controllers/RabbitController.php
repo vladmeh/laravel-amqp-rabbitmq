@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Rabbit;
 use App\Services\RabbitRpc;
 use Bschmitt\Amqp\Publisher;
 use ErrorException;
@@ -27,9 +28,9 @@ XML;
      * @param RabbitRpc $rabbit
      * @return ResponseFactory|Response
      */
-    public function rabbit(RabbitRpc $rabbit)
+    public function rabbit()
     {
-        $response = $rabbit->handle($this->message, $this->queue);
+        $response = Rabbit::rpc($this->message, $this->queue);
         return response($response)->withHeaders([
             'Content-Type' => 'text/xml'
         ]);

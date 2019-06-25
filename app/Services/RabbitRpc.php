@@ -8,7 +8,7 @@ use ErrorException;
 use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RabbitRpc extends Rabbit
+class RabbitRpc extends RabbitConnection
 {
     /**
      * @var string
